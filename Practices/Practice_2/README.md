@@ -1,6 +1,6 @@
 # Datos-Masivos
 
-## Practicas de la unidad 1 de la materia de datos masivos
+## Practica # 2 de la unidad 1 de la materia de datos masivos
 
 ### Equipo conformado por:
 
