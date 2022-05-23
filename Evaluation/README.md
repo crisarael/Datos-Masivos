@@ -1,59 +1,85 @@
-# Evaluation Unit 2
+# Practice 7
 
-# Libraries
+# Exercise 1
+## libraries.
 ```scala
 //The necessary libraries are imported
-import org.apache.spark.ml.classification.MultilayerPerceptronClassifier//algoritmo de Machine Learning multilayer perceptron
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.ml.feature.{IndexToString, StringIndexer, VectorIndexer, VectorAssembler}
+import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.ml.feature.StringIndexer 
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.linalg.Vectors
 ```
 
-# 1-.Load DataSet
-This dataset brings us features about 3 iris flowers variants
+# Exercise 2
+## starting a spark session,read the provided data
 ```scala
-//1.- Carga el dataset
-val dat = spark.read.option("header", "true").option("inferSchema","true")csv("iris.csv")
+var spark = SparkSession.builder().getOrCreate()
+var data = spark.read.option("header", "true").option("inferSchema","true")csv("G:/DATOS_MASIVOS/Iris.csv")
 ```
-![Alt text](Images/flower.png)
 
-# 2-.Show Columns
+# Exercise 3
+## displaying the columns
 ```scala
-//2.- Nombre de las columnas
-println(dat.columns.toSeq)
+data.columns
 ```
 
-# 3-.Show Schema
+# Exercise 4
+## .showing the schematic
 ```scala
-//3.- Esquema
-println(dat.schema)
-dat.printSchema()
+data.printSchema()
+```
+
+# Exercise 5
+## print the first 5 columns
+```scala
+data.select($5.1,$3.5,$1.4,$0.2,$”iris-setosa”)
 ```
 
 
-# 4-.Show the first 5 columns
+# Exercise 6
+## Use the describe() method to learn more about the data in the DataFrame.
+```scala
+data.describe()
+```
+
+
+# Exercise 4
+## .convert categorical data to numeric
 
 ```scala
-//4.- mostrar numero de columnas en este caso 5
-dat.select(dat.columns.slice(0,5).map(m=>col(m)):_*).show()
-// numero de renglones en este caso 5
-dat.show(5)
+// Build the classification model and explain its architecture.
+// Print the model results
+var labelIndexer = new StringIndexer().setInputCol("species").setOutputCol("indexedSpecies").fit(data)
+var indexed = labelIndexer.transform(data).withColumnRenamed("indexedSpecies", "label") 
+
+//divided into 70% training and 30% testing
+var labelIndexer2 = new StringIndexer().setInputCol("label").setOutputCol("indexedSpecies").fit(indexed)
+var assembler = new VectorAssembler().setInputCols(Array("sepal_length","sepal_width","petal_length","petal_width")).setOutputCol("features")
+var  features = assembler.transform(indexed)
+
+//specific layers of the neural network as well as their characteristics
+var splits = features.randomSplit(Array(0.7, 0.3), seed = 1234L)
+var train = splits(0)
+var test = splits(1)
+//arrangement of the layers of the neural network, in this case we choose certain values ​​from the same arrangement of the already mentioned layer
+var layers = Array[Int](4, 5, 4, 3)
+
+//training model creation
+var trainer = new MultilayerPerceptronClassifier().setLayers(layers).setBlockSize(128).setSeed(1234L).setMaxIter(100)
+
+//variable for the training model
+var model = trainer.fit(train)
+
+//will give us the precision values
+var result = model.transform(test)
+var predictionAndLabels = result.select("prediction", "label")
+var evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy")
+
+//print the values ​​and stop the spark session
+println(s"\n\nTest set accuracy = ${evaluator.evaluate(predictionAndLabels)}")
+
 ```
 
-# 5-.use describe() Method
-
-```scala
-//5.-Utilizar el metodo describe
-dat.describe().show()
-```
-
-
-# 6-.Transform the data into categories and labels using indexers
-```scala
-//6.-Transformacion para datos categoricos y etiquetas a clasificar
-//etiqueta
-val labelIndexer = new StringIndexer().setInputCol("species").setOutputCol("label").fit(dat)
-var dat1=labelIndexer.transform(dat)
-//caracteristicas
-val featureIndexer = new VectorAssembler().setInputCols(Array("sepal_length","sepal_width","petal_length","petal_width")).setOutputCol("features")
-var data=featureIndexer.transform(dat1)
-```
