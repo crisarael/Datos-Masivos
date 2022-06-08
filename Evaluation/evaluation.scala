@@ -1,8 +1,4 @@
-# Practice 7
 
-# Exercise 1
-## libraries.
-```scala
 //The necessary libraries are imported
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
@@ -11,45 +7,30 @@ import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.ml.feature.StringIndexer 
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vectors
-```
 
-# Exercise 2
-## starting a spark session,read the provided data
-```scala
+
+
 var spark = SparkSession.builder().getOrCreate()
 var data = spark.read.option("header", "true").option("inferSchema","true")csv("G:/DATOS_MASIVOS/Iris.csv")
-```
 
-# Exercise 3
-## displaying the columns
-```scala
+
 data.columns
-```
 
-# Exercise 4
-## .showing the schematic
-```scala
+
+
 data.printSchema()
-```
 
-# Exercise 5
-## print the first 5 columns
-```scala
+
 data.select($5.1,$3.5,$1.4,$0.2,$”iris-setosa”)
-```
 
 
-# Exercise 6
-## Use the describe() method to learn more about the data in the DataFrame.
-```scala
+
+
 data.describe()
-```
 
 
-# Exercise 4
-## .convert categorical data to numeric
 
-```scala
+
 // Build the classification model and explain its architecture.
 // Print the model results
 var labelIndexer = new StringIndexer().setInputCol("species").setOutputCol("indexedSpecies").fit(data)
@@ -81,5 +62,6 @@ var evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy"
 //print the values ​​and stop the spark session
 println(s"\n\nTest set accuracy = ${evaluator.evaluate(predictionAndLabels)}")
 
-```
+
+
 

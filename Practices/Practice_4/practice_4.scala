@@ -1,63 +1,40 @@
-//1. Algoritmo 1 Versión recursiva descendente
-def fib(num: Int):Int ={
-  if(num < 2){
-    return num
-  }else{
-  return fib(num-1)+fib(num-2)
-  }
-}
-Exercise 2
-//2. Algoritmo 2 Versión con fórmula explícita
-import scala.math.sqrt
-import scala.math.pow
-def fib2(num: Double):Double ={
-  var j = 0.0
-  if(num < 2){
-    return num
-  }else{
-    val aureo = (1+sqrt(5))/2
-    j = pow(aureo,num)
-    j = j - pow((1.0 - aureo),num)
-    j = j / sqrt(5)
 
-  }
-  return j
+//The necessary libraries are imported
+import org.apache.spark.mllib.tree.GradientBoostedTrees
+import org.apache.spark.mllib.tree.configuration.BoostingStrategy
+import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel
+import org.apache.spark.mllib.util.MLUtils
+
+
+val data = MLUtils.loadLibSVMFile(sc, "data/mllib/sample_libsvm_data.txt")
+// Split the data into training and test sets (30% held out for testing)
+val splits = data.randomSplit(Array(0.7, 0.3))
+val (trainingData, testData) = (splits(0), splits(1))
+
+
+// Data Set to Clean
+// The defaultParams for Classification use LogLoss by default.
+val boostingStrategy = BoostingStrategy.defaultParams("Classification")
+boostingStrategy.numIterations = 3 // Note: Use more iterations in practice.
+boostingStrategy.treeStrategy.numClasses = 2
+boostingStrategy.treeStrategy.maxDepth = 5
+// Empty categoricalFeaturesInfo indicates all features are continuous.
+boostingStrategy.treeStrategy.categoricalFeaturesInfo = Map[Int, Int]()
+
+val model = GradientBoostedTrees.train(trainingData, boostingStrategy)
+
+
+// Separate dataset
+val labelAndPreds = testData.map { point =>
+  val prediction = model.predict(point.features)
+  (point.label, prediction)
 }
-Exercise 3
-//3. Algoritmo 3 Versión iterativa
-def fib3(num: Int):Int ={
-  var a = 0
-  var b = 1
-  var c = 0
-  for(k <- 0 until num){
-    c = b + a
-    a = b
-    b = c
-  }
-  return a
-}
-Exercise 4
-//4. Algoritmo 4 Versión iterativa 2 variables
-def fib4(num: Int):Int ={
-  var a = 0
-  var b = 1
-  for(k <- 0 until num){
-    b=b+a
-    a=b-a
-  }
-  return b
-}
-Exercise 5
-//5. Algoritmo 5 Versión iterativa vector
-def fib5(num: Int):Int ={
-  if(num<2){
-    return num
-  }else{
-    var vec = Array(0,1)
-    for(k <- 2 until num+1){
-        vec=vec:+(vec(k-1)+vec(k-2))
-    }
-    return vec(num)
-  }
-}
- 
+val testErr = labelAndPreds.filter(r => r._1 != r._2).count.toDouble / testData.count()
+println(s"Test Error = $testErr")
+println(s"Learned classification GBT model:\n ${model.toDebugString}")
+
+
+model.save(sc, "target/tmp/myGradientBoostingClassificationModel")
+val sameModel = GradientBoostedTreesModel.load(sc,
+  "target/tmp/myGradientBoostingClassificationModel")
+
