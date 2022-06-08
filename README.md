@@ -8,17 +8,16 @@ SUBDIRECCIÓN ACADÉMICA
  
 DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN
  
-SEMESTRE SEPTIEMBRE 2020 – ENERO 2021
 
-INGENIERÍA EN SISTEMAS COMPUTACIONALES
+INGENIERÍA Informatica
 
  
  [![](https://upload.wikimedia.org/wikipedia/commons/2/2e/ITT.jpg)](https://upload.wikimedia.org/wikipedia/commons/2/2e/ITT.jpg)
 
+Facilitador:
 JOSÉ CHRISTIAN ROMERO HERNÁNDEZ
 
 DATOS MASIVOS
-BDD-1704 SC9A, L - V 18:00 - 19:00 (91L4/0308)
 
 
 **FINAL PROJECT**
@@ -26,12 +25,12 @@ BDD-1704 SC9A, L - V 18:00 - 19:00 (91L4/0308)
 
 **STUDENTS**
 
-BERNARDINO MARTINEZ JERONIMO 14212334
+Garcia Torres Cristopher Arael #17210892
 
-CERON URIBE ARTURO 1721150676
+Rivas Padilla Giselle #17210902
 
 
-Tijuana, Baja California, al 07 de enero de 2021.
+
  
 </div>
 
