@@ -9,7 +9,7 @@ SUBDIRECCIÓN ACADÉMICA
 DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN
  
 
-INGENIERÍA Informatica
+INGENIERÍA INFORMATICA
 
  
  [![](https://upload.wikimedia.org/wikipedia/commons/2/2e/ITT.jpg)](https://upload.wikimedia.org/wikipedia/commons/2/2e/ITT.jpg)
@@ -76,7 +76,7 @@ Support vector machine training consists of two phases
 </div>
 
 <p align="center">
-<img src="https://github.com/ArturoCeron/BigData/blob/Project/Project/documentation/SVM.png">
+<img src="https://github.com/crisarael/Datos-Masivos/blob/Unit_4/documentation/SVM.png">
 </p>
 
 
@@ -92,7 +92,7 @@ In a decision tree, there are two nodes, which are the decision node and the lea
 </div>
 
 <p align="center">
-<img src="https://github.com/ArturoCeron/BigData/blob/Project/Project/documentation/dtc.png">
+<img src="https://github.com/crisarael/Datos-Masivos/blob/Unit_4/documentation/dtc.png">
 </p>
 
 
@@ -117,7 +117,7 @@ It cannot converge. The expected probability estimation process may learn that t
 </div>
 
 <p align="center">
-<img src="https://github.com/ArturoCeron/BigData/blob/Project/Project/documentation/lr.jpg">
+<img src="https://github.com/crisarael/Datos-Masivos/blob/Unit_4/documentation/lr.jpg">
 </p>
 
 
@@ -135,7 +135,7 @@ In the backward pass, using backpropagation and the chain rule of calculus, part
 </div>
 
 <p align="center">
-<img src="https://github.com/ArturoCeron/BigData/blob/Project/Project/documentation/mlcp.png">
+<img src="https://github.com/crisarael/Datos-Masivos/blob/Unit_4/documentation/mlcp.png">
 </p>
 
 ## Implementation <a name="implement"></a>
