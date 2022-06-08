@@ -1,85 +1,61 @@
-# Practice 7
-
-# Exercise 1
-## libraries.
+Import a simple spark session 
 ```scala
-//The necessary libraries are imported
-import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.IntegerType
-import org.apache.spark.ml.feature.StringIndexer 
+```
+
+Minimize the errors with code
+```scala
+import org.apache.log4j._
+Logger.getLogger("org").setLevel(Level.ERROR)
+```
+
+Create an instance for the spark session
+```scala
+val spark = SparkSession.builder().getOrCreate()
+```
+
+Import the Kmeans library
+```scala
+import org.apache.spark.ml.clustering.KMeans
+```
+
+Load the dataset from the csv file
+```scala
+val data = spark.read.option("header", "true").option("inferSchema","true")csv("C:/Users/CORSAIR/Desktop/Eva3/Wholesale customers data.csv")
+```
+
+Select the following columns: Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen and call this set as feature_data
+```scala
+val feature_data = data.select("Fresh", "Milk", "Grocery", "Frozen", "Detergents_Paper", "Delicassen")
+```
+
+Import Vector Assembler y Vector
+```scala
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vectors
 ```
 
-# Exercise 2
-## starting a spark session,read the provided data
+Create a new object Vector Assembler for the features columns as an input set
 ```scala
-var spark = SparkSession.builder().getOrCreate()
-var data = spark.read.option("header", "true").option("inferSchema","true")csv("G:/DATOS_MASIVOS/Iris.csv")
+val assembler = new VectorAssembler().setInputCols(Array("Fresh", "Milk", "Grocery", "Frozen", "Detergents_Paper", "Delicassen")).setOutputCol("features")
 ```
 
-# Exercise 3
-## displaying the columns
+Use the object assembler to transform feature_data
 ```scala
-data.columns
+val features = assembler.transform(feature_data)
 ```
 
-# Exercise 4
-## .showing the schematic
+Create the kmean model with k = 3
 ```scala
-data.printSchema()
+val kmeans = new KMeans().setK(3).setSeed(1L)
+val model = kmeans.fit(features)
 ```
 
-# Exercise 5
-## print the first 5 columns
+Evaluate the groups using Within Set Sum of Squared Errors WSSSE and print the centroids.
 ```scala
-data.select($5.1,$3.5,$1.4,$0.2,$”iris-setosa”)
+val WSSE = model.computeCost(features)
+println(s"\n\nWithin set sum of Squared Errors = $WSSE\n\n")
+
+println("Cluster Centers: ")
+model.clusterCenters.foreach(println)
 ```
-
-
-# Exercise 6
-## Use the describe() method to learn more about the data in the DataFrame.
-```scala
-data.describe()
-```
-
-
-# Exercise 4
-## .convert categorical data to numeric
-
-```scala
-// Build the classification model and explain its architecture.
-// Print the model results
-var labelIndexer = new StringIndexer().setInputCol("species").setOutputCol("indexedSpecies").fit(data)
-var indexed = labelIndexer.transform(data).withColumnRenamed("indexedSpecies", "label") 
-
-//divided into 70% training and 30% testing
-var labelIndexer2 = new StringIndexer().setInputCol("label").setOutputCol("indexedSpecies").fit(indexed)
-var assembler = new VectorAssembler().setInputCols(Array("sepal_length","sepal_width","petal_length","petal_width")).setOutputCol("features")
-var  features = assembler.transform(indexed)
-
-//specific layers of the neural network as well as their characteristics
-var splits = features.randomSplit(Array(0.7, 0.3), seed = 1234L)
-var train = splits(0)
-var test = splits(1)
-//arrangement of the layers of the neural network, in this case we choose certain values ​​from the same arrangement of the already mentioned layer
-var layers = Array[Int](4, 5, 4, 3)
-
-//training model creation
-var trainer = new MultilayerPerceptronClassifier().setLayers(layers).setBlockSize(128).setSeed(1234L).setMaxIter(100)
-
-//variable for the training model
-var model = trainer.fit(train)
-
-//will give us the precision values
-var result = model.transform(test)
-var predictionAndLabels = result.select("prediction", "label")
-var evaluator = new MulticlassClassificationEvaluator().setMetricName("accuracy")
-
-//print the values ​​and stop the spark session
-println(s"\n\nTest set accuracy = ${evaluator.evaluate(predictionAndLabels)}")
-
-```
-
